@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace AuthenticationApplication
 {
@@ -41,7 +43,9 @@ namespace AuthenticationApplication
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.AddMvc();
-            
+            services.AddDataProtection()
+             .PersistKeysToFileSystem(new DirectoryInfo(@"D:\sharing_key\"))
+             .SetApplicationName("SharedCookieApp");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -53,7 +57,10 @@ namespace AuthenticationApplication
             app.UseApplicationInsightsRequestTelemetry();
 
             app.UseApplicationInsightsExceptionTelemetry();
-
+            app.UseCookieAuthentication(new CookieAuthenticationOptions()
+            {
+                AuthenticationScheme = "SSOCookie"
+            });
             app.UseMvc();
         }
     }

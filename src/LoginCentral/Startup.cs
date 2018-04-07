@@ -14,6 +14,9 @@ using Microsoft.Extensions.Logging;
 using LoginCentral.Data;
 using LoginCentral.Models;
 using LoginCentral.Services;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
+using Microsoft.AspNetCore.Authentication;
 
 namespace LoginCentral
 {
@@ -54,19 +57,19 @@ namespace LoginCentral
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
-            //Configure identity options
-             services.Configure<IdentityOptions>(options =>
-            {
-                // Lockout settings: disable lock out
-                //options.Lockout.MaxFailedAccessAttempts = int.MaxValue;
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(@"D:\sharing_key\"))
+                .SetApplicationName("SharedCookieApp");
 
+            //Configure identity options
+            Action<IdentityOptions> identityOptions = options =>
+            {
                 // Cookie settings
                 options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 options.Cookies.ApplicationCookie.LoginPath = "";
                 options.Cookies.ApplicationCookie.LogoutPath = "/Logout";
                 options.Cookies.ApplicationCookie.CookieHttpOnly = true;
-
+                options.Cookies.ApplicationCookie.AuthenticationScheme = "SSOCookie";
                 options.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents()
                 {
                     OnRedirectToLogin = context =>
@@ -85,12 +88,13 @@ namespace LoginCentral
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequiredLength = 6;
-            });
-
-
+            };
+            services.Configure<IdentityOptions>(identityOptions);
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -115,9 +119,7 @@ namespace LoginCentral
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
-
             app.UseIdentity();
-
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
             app.UseMvc(routes =>

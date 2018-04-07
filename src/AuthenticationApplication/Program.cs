@@ -17,7 +17,7 @@ namespace AuthenticationApplication
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
-                //.UseUrls("http://localhost:5050") //remove this line when hosted by IIS
+                .UseUrls("http://localhost:4000") //remove this line when hosted by IIS
                 .Build();
 
             host.Run();

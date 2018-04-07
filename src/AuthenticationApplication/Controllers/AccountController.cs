@@ -16,10 +16,11 @@ namespace AuthenticationApplication.Controllers
         }
         [HttpGet]
         public IActionResult Login(){
-            var userName = HttpContext.User.Identity.Name;
+            var userName = User.Identity.Name;
             var returnUrl = _configuration.GetValue<String>("LoginURL");
             if(String.IsNullOrEmpty(userName)){
-                return Redirect(returnUrl);
+                return Ok(new string[] { "Fuck", "Fuck" });
+                //return Redirect(returnUrl);
             }
             return Ok(new string[] { "value1", "value3" });
         }

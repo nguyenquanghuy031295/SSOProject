@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using AuthenticationApplication.Utils.Events;
 
 namespace AuthenticationApplication
 {
@@ -59,7 +61,10 @@ namespace AuthenticationApplication
             app.UseApplicationInsightsExceptionTelemetry();
             app.UseCookieAuthentication(new CookieAuthenticationOptions()
             {
-                AuthenticationScheme = "SSOCookie"
+                AuthenticationScheme = "SSOCookie",
+                Events = new RedirectCookieAuthEvents(Configuration),
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
             });
             app.UseMvc();
         }

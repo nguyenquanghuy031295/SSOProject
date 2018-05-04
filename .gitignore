@@ -31,3 +31,8 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+src/LoginCentral/[Bb]in/
+src/LoginCentral/obj/
+src/AuthenticationApplication/[Bb]in/
+src/AuthenticationApplication/obj/

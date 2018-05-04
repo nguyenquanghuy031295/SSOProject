@@ -46,7 +46,7 @@ namespace AuthenticationApplication
 
             services.AddMvc();
             services.AddDataProtection()
-             .PersistKeysToFileSystem(new DirectoryInfo(@"D:\sharing_key\"))
+             .PersistKeysToFileSystem(new DirectoryInfo(Configuration.GetValue<string>("SharedKeyLocation")))
              .SetApplicationName("SharedCookieApp");
         }
 

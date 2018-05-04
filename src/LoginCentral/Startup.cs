@@ -58,7 +58,7 @@ namespace LoginCentral
                 .AddDefaultTokenProviders();
 
             services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo(@"D:\sharing_key\"))
+                .PersistKeysToFileSystem(new DirectoryInfo(Configuration.GetValue<string>("SharedKeyLocation")))
                 .SetApplicationName("SharedCookieApp");
 
             //Configure identity options
